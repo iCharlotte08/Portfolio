@@ -1,0 +1,803 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Portafolio de Sunmy Panduro</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=JetBrains+Mono:wght@500;700&family=Rubik:wght@400;500;700&display=swap">
+<style>
+/* Layout concept: one-page "level" with a sticky HUD (XP bar), a title-screen hero of tappable language bricks,
+   a character sheet, a quest log of experiences, and a localization mini-game. Single dark look by choice. */
+:root {
+  --ink: #0d0f12;
+  --panel: #171a1f;
+  --panel-2: #20242b;
+  --line: #313843;
+  --grid: rgba(255, 255, 255, 0.045);
+  --fg: #f2f4f7;
+  --muted: #a5aebb;
+  --blue: #00a2ff;
+  --blue-d: #0070b3;
+  --red: #e2231a;
+  --red-d: #9e1711;
+  --red-bg: rgba(226, 35, 26, 0.18);
+  --green: #02b757;
+  --green-d: #017a3b;
+  --green-bg: rgba(2, 183, 87, 0.16);
+  --yellow: #ffc32a;
+  --yellow-d: #b38400;
+  --white: #edeff2;
+  --white-d: #8f97a3;
+  --font-display: "Bungee", Impact, "Arial Black", sans-serif;
+  --font-body: "Rubik", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body {
+  background: var(--ink);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--ink);
+  z-index: 30;
+}
+h1, h2, h3, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: var(--blue); }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+.wrap {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- HUD ---------- */
+.hud {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  background: var(--ink);
+  border-bottom: 2px solid var(--line);
+}
+.hud .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
+.logo {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  background: var(--blue);
+  color: var(--ink);
+  padding: 6px 9px;
+  border-radius: 5px;
+  box-shadow: 0 3px 0 var(--blue-d);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  flex: none;
+}
+.xp-block { flex: 1; min-width: 0; }
+.xp-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font: 700 0.68rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.xp-label b { color: var(--fg); }
+.xp {
+  height: 12px;
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.xp i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: repeating-linear-gradient(90deg, var(--green) 0 10px, var(--green-d) 10px 12px);
+  transition: width 0.5s ease;
+}
+.nav { display: flex; gap: 4px; flex: none; }
+.nav a {
+  font: 700 0.7rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 4px;
+}
+.nav a:hover { color: var(--fg); background: var(--panel-2); }
+@media (max-width: 760px) { .nav { display: none; } }
+
+/* ---------- Buttons & shared ---------- */
+.btn {
+  display: inline-block;
+  font: 700 0.78rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.85rem 1.2rem;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--blue);
+  box-shadow: 0 5px 0 var(--blue-d);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--blue-d); }
+.btn.alt { background: var(--panel-2); color: var(--fg); box-shadow: 0 5px 0 #000; }
+.btn.alt:active { box-shadow: 0 1px 0 #000; }
+.btn.small { padding: 0.55rem 0.8rem; font-size: 0.7rem; }
+
+.eyebrow {
+  font: 700 0.72rem var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+section { padding-block: clamp(48px, 8vw, 88px); }
+.sec-head { display: grid; gap: 10px; margin-bottom: 32px; max-width: 62ch; }
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 5vw, 2.6rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.sec-head p { color: var(--muted); }
+.panel {
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 22px;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.45);
+  min-width: 0;
+}
+.panel h3 {
+  font: 700 0.75rem var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding-block: clamp(36px, 7vw, 80px);
+  background-color: var(--ink);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  border-bottom: 2px solid var(--line);
+  overflow-x: clip;
+}
+.hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
+@media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; gap: 28px; } }
+.hero-copy { display: grid; gap: 20px; min-width: 0; }
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.7rem, 11vw, 5.4rem);
+  line-height: 0.98;
+  letter-spacing: 0.01em;
+  text-shadow: 5px 5px 0 var(--blue-d);
+}
+.lead { font-size: clamp(1.05rem, 2.4vw, 1.3rem); max-width: 34ch; color: var(--fg); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
+.facts { display: grid; gap: 6px; font: 500 0.82rem var(--font-mono); color: var(--muted); }
+.facts li::before { content: "> "; color: var(--green); }
+
+.stage { display: grid; gap: 10px; justify-items: center; min-width: 0; }
+.stage-hint {
+  font: 700 0.72rem var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+.bricks { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px 16px; padding: 16px 0 14px; }
+.bwrap { animation: bob 4.2s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.bwrap:nth-child(even) { margin-top: 22px; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.brick {
+  --c: var(--blue);
+  --s: var(--blue-d);
+  --t: var(--ink);
+  position: relative;
+  width: 8.4rem;
+  height: 5rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--c);
+  color: var(--t);
+  box-shadow: 0 8px 0 var(--s);
+  cursor: pointer;
+  font-family: var(--font-display), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.brick::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 78px;
+  height: 9px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse 10px 8px at 50% 100%, var(--c) 96%, transparent 100%) 0 0 / 26px 9px repeat-x;
+}
+.brick:hover { transform: translateY(-3px); }
+.brick:active { transform: translateY(5px); box-shadow: 0 3px 0 var(--s); }
+.brick small {
+  font: 700 0.62rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.brick.got::after {
+  content: "OK";
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font: 700 0.62rem var(--font-mono);
+}
+.brick.red { --c: var(--red); --s: var(--red-d); --t: #fff; }
+.brick.green { --c: var(--green); --s: var(--green-d); }
+.brick.yellow { --c: var(--yellow); --s: var(--yellow-d); }
+.brick.white { --c: var(--white); --s: var(--white-d); }
+.brick-status {
+  min-height: 3.2em;
+  max-width: 34ch;
+  text-align: center;
+  font: 500 0.85rem var(--font-mono);
+  color: var(--fg);
+}
+
+/* ---------- Character sheet ---------- */
+.sheet { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 22px; }
+.lang { display: grid; gap: 6px; }
+.lang + .lang { margin-top: 14px; }
+.lang-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.lang-name { font-weight: 700; }
+.lang-lvl { font: 500 0.78rem var(--font-mono); color: var(--muted); text-align: right; }
+.seg { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+.seg span { height: 12px; border-radius: 2px; background: var(--panel-2); }
+.seg span.on { background: var(--c); }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+}
+.tools { margin-top: 22px; }
+.achievements { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 22px; margin-top: 22px; }
+.ach { display: grid; gap: 4px; }
+.ach .flag {
+  justify-self: start;
+  font: 700 0.62rem var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+}
+.ach strong { font-size: 1.05rem; line-height: 1.3; }
+.ach span.sub { color: var(--muted); font-size: 0.9rem; }
+
+/* ---------- Quest log ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 22px; }
+.fchip {
+  --c: var(--fg);
+  font: 700 0.72rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg);
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.fchip:hover { border-color: var(--c); }
+.fchip[aria-pressed="true"] { background: var(--c); color: var(--ink); border-color: var(--c); }
+.fchip[data-f="traduccion"] { --c: var(--blue); }
+.fchip[data-f="interpretacion"] { --c: var(--green); }
+.fchip[data-f="comunidad"] { --c: var(--yellow); }
+.count { margin-left: auto; font: 500 0.78rem var(--font-mono); color: var(--muted); }
+
+.quests { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 22px; align-items: start; }
+@media (max-width: 800px) { .quests { grid-template-columns: minmax(0, 1fr); } }
+.card {
+  --stud: var(--blue);
+  position: relative;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.45);
+  min-width: 0;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 18px;
+  width: 104px;
+  height: 9px;
+  background: radial-gradient(ellipse 10px 8px at 50% 100%, var(--stud) 96%, transparent 100%) 0 0 / 26px 9px repeat-x;
+}
+.card summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  padding: 20px 56px 18px 20px;
+  position: relative;
+  border-radius: 10px;
+}
+.card summary::-webkit-details-marker { display: none; }
+.card summary:hover { background: var(--panel-2); }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font: 500 0.74rem var(--font-mono); color: var(--muted); }
+.meta .org { color: var(--stud); font-weight: 700; }
+.card h3 { font-size: 1.12rem; line-height: 1.3; font-weight: 700; }
+.sum { color: var(--muted); font-size: 0.95rem; }
+.tog {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  display: grid;
+  place-items: center;
+  font: 700 1rem var(--font-mono);
+  line-height: 1;
+}
+.tog::before { content: "+"; }
+.card[open] .tog::before { content: "\2212"; }
+.card[open] .tog { background: var(--stud); border-color: var(--stud); color: var(--ink); }
+.body { display: grid; gap: 14px; padding: 0 20px 20px; }
+.body li { position: relative; padding-left: 18px; font-size: 0.95rem; }
+.body li + li { margin-top: 6px; }
+.body li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 7px; height: 7px; background: var(--stud); border-radius: 2px; }
+.why {
+  font-size: 0.92rem;
+  padding: 10px 12px;
+  background: var(--panel-2);
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.why b { font: 700 0.68rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--stud); display: block; margin-bottom: 2px; }
+.unlocked-label { font: 700 0.66rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.cat-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.cat-tag, .key-tag {
+  font: 700 0.62rem var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--fg);
+}
+.key-tag { background: var(--yellow); color: var(--ink); border-color: var(--yellow); }
+
+/* ---------- Challenge ---------- */
+.game { max-width: 760px; display: grid; gap: 18px; }
+.game-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; font: 700 0.72rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.game-top b { color: var(--yellow); }
+.src {
+  border: 2px solid var(--blue);
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: 6px 6px 0 var(--blue-d);
+  display: grid;
+  gap: 8px;
+}
+.src .lbl { font: 700 0.66rem var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); }
+.src .txt { font-size: clamp(1.15rem, 3vw, 1.5rem); font-weight: 500; line-height: 1.35; }
+.opts { display: grid; gap: 12px; }
+.opt {
+  text-align: left;
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  font: 400 1rem var(--font-body);
+  color: var(--fg);
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.opt:hover:not(:disabled) { border-color: var(--blue); }
+.opt:disabled { cursor: default; color: var(--fg); }
+.opt .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.opt .cnt { flex: none; font: 500 0.72rem var(--font-mono); color: var(--muted); }
+.opt .cnt.over { color: var(--red); font-weight: 700; }
+.opt .note { display: none; font-size: 0.88rem; color: var(--muted); }
+.opt.done .note { display: block; }
+.opt.ok { border-color: var(--green); background: var(--green-bg); }
+.opt.ok .note { color: var(--fg); }
+.opt.bad { border-color: var(--red); background: var(--red-bg); }
+.fb { min-height: 1.6em; font-weight: 700; }
+.fb.ok { color: var(--green); }
+.fb.bad { color: var(--red); }
+.game-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.result { display: grid; gap: 12px; }
+.result .big { font-family: var(--font-display); font-size: clamp(2rem, 7vw, 3.2rem); line-height: 1; color: var(--green); }
+.disclaimer { font: 500 0.75rem var(--font-mono); color: var(--muted); }
+
+/* ---------- Contact ---------- */
+.contact { background: var(--panel); border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); }
+.contact-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: center; }
+@media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; } }
+.contact-copy { display: grid; gap: 16px; min-width: 0; }
+.contact-copy p { max-width: 46ch; color: var(--muted); }
+.unlock-note { font: 700 0.72rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.unlock-note.on { color: var(--green); }
+.contact-box { display: grid; gap: 14px; background: var(--ink); border: 2px solid var(--line); border-radius: 10px; padding: 20px; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.45); min-width: 0; }
+.contact-box.on { border-color: var(--green); }
+.crow { display: grid; gap: 6px; }
+.crow .lbl { font: 700 0.66rem var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.crow .line { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.crow .val { font: 500 1rem var(--font-mono); user-select: all; overflow-wrap: anywhere; min-width: 0; }
+
+footer { padding-block: 28px; }
+footer p { font: 500 0.78rem var(--font-mono); color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .bwrap { animation: none; }
+  .xp i, .btn, .brick { transition: none; }
+}
+.samples{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:22px}
+.smp{display:grid;gap:6px;align-content:start}
+.smp .num{font:700 .72rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);margin-bottom:6px}
+.smp .lbl{font:700 .66rem var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+.smp .lbl.es{color:var(--green);margin-top:8px}
+.smp .en{color:var(--muted)}
+.smp .es{font-size:1.1rem;font-weight:500}
+.smp .why-s{font-size:.88rem;color:var(--muted);margin-top:8px;padding-top:10px;border-top:1px solid var(--line)}
+</style>
+
+<header class="hud">
+  <div class="wrap">
+    <a class="logo" href="#inicio" aria-label="Inicio">SPA</a>
+    <div class="xp-block">
+      <div class="xp-label"><span id="lvl">Nivel 1</span><b id="xpText">0 XP</b></div>
+      <div class="xp" role="progressbar" aria-label="Progreso de XP" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="xpBar"><i id="xpFill"></i></div>
+    </div>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#personaje">Personaje</a>
+      <a href="#misiones">Misiones</a>
+      <a href="#muestras">Muestras</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<main id="inicio">
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Postulación · Traductora · Epic Studios (Roblox)</p>
+        <h1>Sunmy<br>Panduro</h1>
+        <p class="lead">Lost in translation? No bajo mi supervisión.<br>Que el juego suene tan bien como se juega.</p>
+        <div class="cta-row">
+          <a class="btn" href="#misiones">Ver mis quests</a>
+          <a class="btn alt" href="#muestras">Ver muestras</a>
+        </div>
+        <ul class="facts">
+          <li>Lima, Perú</li>
+          <li>Interpreto desde 2019 · traduzco desde 2020</li>
+          <li>Equipos remotos con Zoom y Slack, cero drama</li>
+        </ul>
+      </div>
+      <div class="stage">
+        
+        <p class="stage-hint">Tap en los ladrillos: son mis idiomas</p>
+        <div class="bricks" id="bricks" role="group" aria-label="Idiomas"></div>
+        <p class="brick-status" id="brickStatus" aria-live="polite">Cada ladrillo recogido suma XP.</p>
+      </div>
+    </div>
+  </div>
+
+  <section id="personaje">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Hoja de personaje</p>
+        <h2>Mi build: idiomas, tools y estudios</h2>
+        <p>Lo que traigo en el inventario.</p>
+      </div>
+      <div class="sheet">
+        <div class="panel">
+          <h3>Idiomas</h3>
+          <div id="langs"></div>
+        </div>
+        <div class="panel">
+          <h3>Habilidades pasivas</h3>
+          <div class="tags">
+            <span class="tag">Localización creativa</span>
+            <span class="tag">Tono y humor</span>
+            <span class="tag">Precisión terminológica</span>
+            <span class="tag">Confidencialidad (HIPAA)</span>
+            <span class="tag">Plazos de entrega</span>
+            <span class="tag">Trabajo remoto</span>
+            <span class="tag">Traducción de documentos</span>
+          </div>
+          <h3 class="tools">Herramientas</h3>
+          <div class="tags">
+            <span class="tag">Zoom</span>
+            <span class="tag">Slack</span>
+            <span class="tag">Google Workspace</span>
+            <span class="tag">Microsoft Office</span>
+          </div>
+        </div>
+      </div>
+      <div class="achievements">
+        <div class="panel ach">
+          <span class="flag">Logro</span>
+          <strong>Licenciatura en Traducción e Interpretación</strong>
+          <span class="sub">Universidad César Vallejo · Lima · 2019–2023</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="misiones" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Registro de misiones</p>
+        <h2>Mis quests</h2>
+      </div>
+      <div class="quests" id="quests"></div>
+    </div>
+  </section>
+
+  <section id="muestras" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Muestras</p>
+        <h2>Lost in translation? Skill issue.</h2>
+        <p>Así se ve una localización que entiende el chiste, respeta el contexto y no rompe la experiencia de juego.</p>
+      </div>
+      <div class="samples">
+        <div class="panel smp"><span class="num">01 · Tone &amp; Community</span><span class="lbl">EN</span><p class="en">Oops! You fell off the obby. Try again!</p><span class="lbl es">ES</span><p class="es">¡Ups! Te caíste del obby. ¡Inténtalo otra vez!</p><p class="why-s">El mensaje mantiene la energía del original y habla como la comunidad gamer. «Obby» se queda: traducirlo podría restarle naturalidad al contexto.</p></div>
+        <div class="panel smp"><span class="num">02 · Idioms &amp; Adaptation</span><span class="lbl">EN</span><p class="en">That boss fight was no walk in the park!</p><span class="lbl es">ES</span><p class="es">¡Esa pelea contra el jefe no fue pan comido!</p><p class="why-s">La idea no es traducir el modismo palabra por palabra, sino encontrar una expresión que transmita el mismo sentido y suene natural en español.</p></div>
+        <div class="panel smp"><span class="num">03 · UI &amp; Character Limits</span><span class="lbl">EN · 40 characters</span><p class="en">Collect 10 coins to unlock the next level!</p><span class="lbl es">ES · 38 caracteres</span><p class="es">¡Consigue 10 monedas y pasa de nivel!</p><p class="why-s">La interfaz también tiene sus reglas. La solución conserva la acción y el objetivo sin pasarse del espacio disponible.</p></div>
+      </div>
+      <p class="disclaimer" style="margin-top:18px">Textos de ejemplo inventados para esta muestra; no pertenecen a ningún juego real.</p>
+    </div>
+  </section>
+
+  <section class="contact" id="contacto">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <p class="eyebrow">Siguiente nivel</p>
+        <h2>¿Le damos vida a tus palabras?</h2>
+        <p>Ya sea un videojuego, un proyecto de traducción o una colaboración lingüística, hagamos que el mensaje conecte en ambos idiomas.</p>
+      </div>
+      <div class="contact-box" id="contactBox">
+        <div class="crow">
+          <span class="lbl">Correo</span>
+          <div class="line"><span class="val" id="emailVal">sunmyabigail.pa@gmail.com</span><button class="btn small alt" data-copy="emailVal" type="button">Copiar</button></div>
+        </div>
+        <div class="crow">
+          <span class="lbl">Teléfono</span>
+          <div class="line"><span class="val" id="phoneVal">+51 912 142 960</span><button class="btn small alt" data-copy="phoneVal" type="button">Copiar</button></div>
+        </div>
+        <div class="crow">
+          <span class="lbl">Ubicación</span>
+          <div class="line"><span class="val">Lima, Perú</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><p>Sunmy Panduro Aedo · Portafolio · Traductora e intérprete EN–ES · 2026</p></div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+
+  /* ---------- Data ---------- */
+  var BRICKS = [
+    { w: "Hola", lang: "Español", lvl: "Nativo", c: "" },
+    { w: "Hello", lang: "Inglés", lvl: "Avanzado C1", c: "red" },
+    { w: "Olá", lang: "Portugués", lvl: "Elemental", c: "green" },
+    { w: "Bonjour", lang: "Francés", lvl: "Elemental", c: "yellow" },
+    { w: "你好", lang: "Mandarín", lvl: "Elemental", c: "white" }
+  ];
+  var LANGS = [
+    { n: "Español", l: "Nativo", v: 10, c: "var(--blue)" },
+    { n: "Inglés", l: "Avanzado · C1", v: 8, c: "var(--red)" },
+    { n: "Portugués", l: "Elemental", v: 3, c: "var(--green)" },
+    { n: "Francés", l: "Elemental", v: 3, c: "var(--yellow)" },
+    { n: "Mandarín", l: "Elemental", v: 3, c: "var(--white)" }
+  ];
+  var CATS = { traduccion: "Traducción", interpretacion: "Interpretación", comunidad: "Comunidad y clientes" };
+  var CATCOL = { traduccion: "blue", interpretacion: "green", comunidad: "yellow" };
+  var QUESTS = [
+    {
+      id: "free", key: true, cats: ["traduccion"],
+      title: "Traductora freelance EN–ES", org: "Freelance", when: "Ene 2024 – Actualidad · Remoto",
+      sum: "Traducción de documentos del inglés al español para clientes, en modalidad remota.",
+      pts: ["Traduzco documentos del inglés al español cuidando la precisión y la naturalidad del texto.", "Gestiono plazos y comunicación con cada cliente de forma autónoma."],
+      why: "Entregas puntuales y trabajo autónomo, claves para cumplir calendarios de lanzamiento.",
+      skills: ["Traducción de documentos", "Trabajo remoto", "Autonomía", "Plazos"]
+    },
+    {
+      id: "manga", key: true, cats: ["traduccion"],
+      title: "Traductora de manga inglés → español", org: "Cappuccino Scan", when: "Mar–Oct 2020 · Remoto · Voluntariado",
+      sum: "Traducción de manga con adaptación de humor, tono y referencias culturales.",
+      pts: ["Traduje manga del inglés al español adaptando humor, tono y referencias culturales.", "Trabajé con otros voluntarios para cumplir los plazos de publicación."],
+      why: "El mismo reto que localizar un videojuego: conservar la voz del original y lograr que funcione en español.",
+      skills: ["Localización creativa", "Tono y humor", "Plazos", "Equipo voluntario"]
+    },
+    {
+      id: "legal", key: true, cats: ["traduccion"],
+      title: "Traductora legal para migrantes", org: "Respond Crisis Translation", when: "Sep–Nov 2023 · Remoto · Voluntariado",
+      sum: "Traducción de documentos legales para personas migrantes.",
+      pts: ["Traduje documentos legales con terminología exacta.", "Formé parte del equipo de operaciones de una organización remota."],
+      why: "Rigor terminológico en textos donde un error tiene consecuencias; base sólida para trabajar con glosarios y guías de estilo.",
+      skills: ["Terminología legal", "Precisión", "Equipo remoto"]
+    },
+    {
+      id: "lis", key: true, cats: ["interpretacion"],
+      title: "Intérprete de español por teléfono", org: "Language Interpreter Solutions", when: "Nov 2024 – Actualidad · Lima (remoto)",
+      sum: "Interpretación telefónica del español en los sectores médico y de seguros.",
+      pts: ["Interpreto por teléfono del español en los sectores médico y de seguros.", "Aplico glosarios y terminología técnica en tiempo real.", "Resguardo la confidencialidad de pacientes y clientes según HIPAA."],
+      why: "Agilidad para elegir el término exacto, uso de glosarios y manejo responsable de información sensible.",
+      skills: ["Interpretación en tiempo real", "Confidencialidad", "Terminología de seguros"]
+    },
+    {
+      id: "bpo", key: true, cats: ["interpretacion"],
+      title: "Intérprete médica", org: "Interactive Contact Center BPO", when: "Ago 2022 – Dic 2023 · Remoto",
+      sum: "Interpretación de información médica entre profesionales de salud y pacientes.",
+      pts: ["Interpreté información médica entre profesionales de salud y pacientes con precisión.", "Manejé terminología de varias especialidades: atención primaria, emergencias, cardiología y terapia ocupacional y física."],
+      why: "Precisión y rapidez con vocabulario técnico en contextos de alta exigencia.",
+      skills: ["Terminología médica", "Precisión", "Varias especialidades"]
+    },
+    {
+      id: "1n1d", key: false, cats: ["interpretacion"],
+      title: "Intérprete y facilitadora de talleres", org: "1Nation 1Day", when: "Oct 2018 – Oct 2019 · Lima · Voluntariado",
+      sum: "Talleres de inglés e interpretación consecutiva en entornos educativos.",
+      pts: ["Dicté talleres de inglés a estudiantes de secundaria.", "Interpreté de forma consecutiva en entornos educativos comunitarios (sep. 2019)."],
+      why: "Comunicación en vivo y adaptación del lenguaje a un público joven.",
+      skills: ["Interpretación consecutiva", "Voluntariado"]
+    }
+  ];
+
+  /* ---------- XP / HUD ---------- */
+  var XP_BRICK = 10, XP_QUEST = 5;
+  var closedCount = QUESTS.filter(function (q) { return !q.key; }).length;
+  var MAX = BRICKS.length * XP_BRICK + closedCount * XP_QUEST;
+  var xp = 0;
+
+  function renderHud() {
+    var pct = Math.round((xp / MAX) * 100);
+    $("#xpFill").style.width = pct + "%";
+    $("#xpBar").setAttribute("aria-valuenow", String(pct));
+    var full = xp >= MAX;
+    var lvl = full ? "MÁX" : String(1 + Math.floor(xp / (MAX / 4)));
+    $("#lvl").textContent = "Nivel " + lvl;
+    $("#xpText").textContent = xp + " / " + MAX + " XP";
+    $("#contactBox").classList.toggle("on", full);
+  }
+  function addXP(n) { xp = Math.min(MAX, xp + n); renderHud(); }
+
+  /* ---------- Bricks ---------- */
+  var gotBricks = {};
+  var bricksEl = $("#bricks");
+  BRICKS.forEach(function (b, i) {
+    var wrap = document.createElement("div");
+    wrap.className = "bwrap";
+    wrap.style.setProperty("--d", (i * 0.45) + "s");
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "brick " + b.c;
+    btn.setAttribute("aria-label", "Ladrillo " + b.w);
+    btn.innerHTML = "<span></span><small>?</small>";
+    btn.firstChild.textContent = b.w;
+    btn.addEventListener("click", function () {
+      var status = $("#brickStatus");
+      if (!gotBricks[i]) {
+        gotBricks[i] = true;
+        btn.classList.add("got");
+        btn.querySelector("small").textContent = b.lang;
+        addXP(XP_BRICK);
+        status.textContent = b.w + " · " + b.lang + ", nivel " + b.lvl.toLowerCase() + ". +" + XP_BRICK + " XP";
+      } else {
+        status.textContent = b.w + " · " + b.lang + ", nivel " + b.lvl.toLowerCase() + ".";
+      }
+    });
+    wrap.appendChild(btn);
+    bricksEl.appendChild(wrap);
+  });
+
+  /* ---------- Languages ---------- */
+  $("#langs").innerHTML = LANGS.map(function (l) {
+    var segs = "";
+    for (var i = 0; i < 10; i++) segs += "<span" + (i < l.v ? " class=\"on\"" : "") + "></span>";
+    return "<div class=\"lang\"><div class=\"lang-top\"><span class=\"lang-name\">" + l.n + "</span><span class=\"lang-lvl\">" + l.l + "</span></div><div class=\"seg\" style=\"--c:" + l.c + "\">" + segs + "</div></div>";
+  }).join("");
+
+  /* ---------- Quests ---------- */
+  var questsEl = $("#quests");
+  questsEl.innerHTML = QUESTS.map(function (q) {
+    var tags = (q.key ? "<span class=\"key-tag\">Misión clave</span>" : "") + q.cats.map(function (c) { return "<span class=\"cat-tag\">" + CATS[c] + "</span>"; }).join("");
+    return "<details class=\"card\" data-id=\"" + q.id + "\" data-cats=\"" + q.cats.join(" ") + "\" style=\"--stud:var(--" + CATCOL[q.cats[0]] + ")\"" + (q.key ? " open" : "") + ">" +
+      "<summary><div class=\"cat-tags\">" + tags + "</div><div class=\"meta\"><span class=\"org\">" + q.org + "</span><span>" + q.when + "</span></div>" +
+      "<h3>" + q.title + "</h3><p class=\"sum\">" + q.sum + "</p><span class=\"tog\" aria-hidden=\"true\"></span></summary>" +
+      "<div class=\"body\"><ul>" + q.pts.map(function (p) { return "<li>" + p + "</li>"; }).join("") + "</ul>" +
+      "<p class=\"why\"><b>Relevancia para el puesto</b>" + q.why + "</p>" +
+      "<div><p class=\"unlocked-label\">Habilidades desbloqueadas</p><div class=\"tags\" style=\"margin-top:8px\">" + q.skills.map(function (s) { return "<span class=\"tag\">" + s + "</span>"; }).join("") + "</div></div></div></details>";
+  }).join("");
+
+  var opened = {};
+  QUESTS.forEach(function (q) { if (q.key) opened[q.id] = true; });
+  Array.prototype.forEach.call(questsEl.querySelectorAll("details"), function (d) {
+    d.addEventListener("toggle", function () {
+      var id = d.getAttribute("data-id");
+      if (d.open && !opened[id]) { opened[id] = true; addXP(XP_QUEST); }
+    });
+  });
+
+
+  /* ---------- Copy buttons ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-copy]"), function (btn) {
+    btn.addEventListener("click", function () {
+      var el = document.getElementById(btn.getAttribute("data-copy"));
+      var text = el.textContent;
+      function done() { btn.textContent = "Copiado"; setTimeout(function () { btn.textContent = "Copiar"; }, 1600); }
+      function fallback() {
+        var rng = document.createRange();
+        rng.selectNodeContents(el);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(rng);
+        btn.textContent = "Selecciona y copia";
+        setTimeout(function () { btn.textContent = "Copiar"; }, 2000);
+      }
+      try {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } catch (e) { fallback(); }
+    });
+  });
+
+  renderHud();
+})();
+</script>
+
+</body></html>
